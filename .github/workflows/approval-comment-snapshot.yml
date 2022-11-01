@@ -1,7 +1,7 @@
 name: ApprovalCommentSnapshot
 on:
   workflow_run:
-    workflows: [PrComment]
+    workflows: [ApprovalComment]
     types: [completed]
 permissions:
   id-token: write
