@@ -195,7 +195,7 @@ func (p *PricingProvider) updatePricing(ctx context.Context) {
 	go func() {
 		defer wg.Done()
 		if err := p.updateOnDemandPricing(ctx); err != nil {
-			logging.FromContext(ctx).Errorf("updating on-demand pricing, %s, using existing pricing data from %s", err, p.onDemandUpdateTime.Format(time.RFC3339))
+			logging.FromContext(ctx).Errorf("updating foo bar on-demand pricing, %s, using existing pricing data from %s", err, p.onDemandUpdateTime.Format(time.RFC3339))
 		}
 	}()
 
