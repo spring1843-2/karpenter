@@ -1,0 +1,23 @@
+name: ApprovalComment
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  approval-comment:
+    if: github.repository == 'spring1843/karpenter' && github.event.review.state == 'approved' && startsWith(github.event.review.body ,'/karpenter snapshot')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Save info about the review comment as an artifact for other workflows that run on workflow_run to download them
+        run: |
+          mkdir -p ./tags
+          echo ${{ github.repository }} > ./tags/tag.txt
+          echo ${{ github.event.review.id }} >> ./tags/tag.txt
+          echo ${{ github.event.review.commit_id }} >> ./tags/tag.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          name: tag
+          path: tags/
