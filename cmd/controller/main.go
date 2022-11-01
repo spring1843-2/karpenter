@@ -15,6 +15,7 @@ limitations under the License.
 package main
 
 import (
+	"fmt"
 	"github.com/samber/lo"
 	"k8s.io/utils/clock"
 
@@ -32,6 +33,7 @@ import (
 )
 
 func main() {
+	fmt.Println("foo")
 	ctx, operator := operator.NewOperator()
 	awsCtx := context.NewOrDie(cloudprovider.Context{
 		Context:             ctx,
