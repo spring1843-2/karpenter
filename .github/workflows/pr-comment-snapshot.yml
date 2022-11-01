@@ -47,7 +47,6 @@ jobs:
           fetch-depth: 0
           repository: ${{ env.TAG_REPOSITORY }}
           ref: ${{ env.TAG_COMMIT }}
-      - uses: actions/checkout@v3
       - uses: ./.github/actions/install-go-and-dependencies
       - uses: ./.github/actions/authenticate-aws
       - run: make release
