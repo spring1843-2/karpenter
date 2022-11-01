@@ -5,10 +5,14 @@ on:
 
 jobs:
   pr-comment:
-    if: github.repository == 'spring1843/karpenter' && github.event.review.state == 'approved'
+    if: github.repository == 'spring1843/karpenter' && github.event.review.state == 'approved' && startsWith(github.event.review.body ,'/karpenter snapshot')
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Do something"
+      - name: Save tag and SHA as an artifact for other workflows that run on workflow_run to download them
+        run: |
+          mkdir -p ./tags
+          echo ${{ github.repository }}  > ./tags/tag.txt
+          git rev-parse HEAD >> ./tags/tag.txt
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
