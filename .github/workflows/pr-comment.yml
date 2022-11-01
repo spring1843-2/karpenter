@@ -15,8 +15,8 @@ jobs:
         run: |
           mkdir -p ./tags
           echo ${{ github.repository }} > ./tags/tag.txt
-          echo ${{ github.review.id.sha }} >> ./tags/tag.txt
-          echo ${{ github.review.commit_id }} >> ./tags/tag.txt
+          echo ${{ github.event.review.id.sha }} >> ./tags/tag.txt
+          echo ${{ github.event.review.commit_id }} >> ./tags/tag.txt
       - uses: actions/upload-artifact@v3
         with:
           name: tag
