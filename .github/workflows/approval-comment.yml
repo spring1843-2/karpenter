@@ -27,6 +27,6 @@ jobs:
           script: |
             await github.rest.reactions.createForIssueComment({
               ...context.repo,
-              comment_id: github.event.review.commit_id,
+              comment_id: ${{ github.event.review.id }},
               content: 'eyes',
             })
