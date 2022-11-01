@@ -7,9 +7,9 @@ jobs:
   pr-comment:
     if: github.repository == 'spring1843/karpenter' && github.event.review.state == 'approved'
     runs-on: ubuntu-latest
-        steps:
-          - run: echo "Do something"
-          - name: Dump GitHub context
-            env:
-              GITHUB_CONTEXT: ${{ toJSON(github) }}
-            run: echo "$GITHUB_CONTEXT"
+    steps:
+      - run: echo "Do something"
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
