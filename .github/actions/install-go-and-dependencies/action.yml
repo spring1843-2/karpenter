@@ -16,7 +16,7 @@ runs:
           ~/go/pkg/
           ~/go/bin/
           ~/.kubebuilder/bin
-        key: ${{ runner.os }}-go-cache-${{ hashFiles('go.sum', 'hack/toolchain.sh') }}
+        key: ${{ runner.os }}-go-cache-z3-${{ hashFiles('go.sum', 'hack/toolchain.sh') }}
     - run: |
         make toolchain
         make tidy

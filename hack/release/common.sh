@@ -2,8 +2,8 @@
 set -euo pipefail
 
 config(){
-  AWS_ACCOUNT_ID="071440425669"
-  ECR_GALLERY_NAME="karpenter"
+  AWS_ACCOUNT_ID="339104714817"
+  ECR_GALLERY_NAME="d1w0j9s0"
   RELEASE_REPO=${RELEASE_REPO:-public.ecr.aws/${ECR_GALLERY_NAME}/}
   PRIVATE_PULL_THROUGH_HOST="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com"
   SNS_TOPIC_ARN="arn:aws:sns:us-east-1:${AWS_ACCOUNT_ID}:KarpenterReleases"
