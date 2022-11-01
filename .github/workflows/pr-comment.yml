@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Save tag and SHA as an artifact for other workflows that run on workflow_run to download them
+      - name: Save info about the review comment as an artifact for other workflows that run on workflow_run to download them
         run: |
           mkdir -p ./tags
           echo ${{ github.repository }} > ./tags/tag.txt
