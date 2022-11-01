@@ -16,7 +16,7 @@ jobs:
           mkdir -p ./tags
           echo ${{ github.repository }}  > ./tags/tag.txt
           git rev-parse HEAD >> ./tags/tag.txt
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: tag
+          path: tags/
