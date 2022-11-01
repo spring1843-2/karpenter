@@ -21,3 +21,14 @@ jobs:
         with:
           name: tag
           path: tags/
+      - name: React to approval command
+        uses: actions/github-script@v6
+        with:
+          script: |
+            try {
+              // Add a rocket reaction to the comment
+              await github.rest.reactions.createForIssueComment({
+              ...context.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes',
+            })
