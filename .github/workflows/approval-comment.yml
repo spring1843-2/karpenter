@@ -2,9 +2,8 @@ name: ApprovalComment
 on:
   pull_request_review:
     types: [submitted]
-permissions:
-  discussions: write
-  pull-requests: write
+
+permissions: write-all
 
 jobs:
   approval-comment:
