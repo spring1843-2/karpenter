@@ -5,7 +5,7 @@ on:
 
 jobs:
   approval-comment:
-    if: github.repository == 'aws/karpenter' && github.event.review.state == 'approved' && startsWith(github.event.review.body ,'/karpenter snapshot')
+    if: github.repository == 'spring1843/karpenter' && github.event.review.state == 'approved' && startsWith(github.event.review.body ,'/karpenter snapshot')
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
@@ -19,8 +19,3 @@ jobs:
           echo ${{ github.event.review.commit_id }} >> /tmp/artifacts/metadata.txt
           cat /tmp/artifacts/metadata.txt
       - uses: ./.github/actions/upload-artifact
-      - uses: ./.github/actions/authenticate-ghcr
-        with:
-          actor: ${{ github.actor }}
-          secret: ${{ secrets.GITHUB_TOKEN }}
-      - run: make release-crd
