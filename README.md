@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/aws/karpenter/badge.svg?branch=main)](https://coveralls.io/github/aws/karpenter?branch=main)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/aws/karpenter/issues)
 
-![](website/static/banner.png)
+
 
 Karpenter is an open-source node provisioning project built for Kubernetes.
 Karpenter improves the efficiency and cost of running workloads on Kubernetes clusters by:
