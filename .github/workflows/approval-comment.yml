@@ -5,7 +5,7 @@ on:
 
 jobs:
   karpenter-bot-command:
-    if: github.repository == 'spring1843/karpenter' && contains(github.event.comment.html_url, '/pull/') && contains(github.event.comment.body, '/karpenter snapshot'))
+    if: github.repository == 'spring1843/karpenter' && contains(github.event.comment.html_url, '/pull/') && contains(github.event.comment.body, '/karpenter snapsh
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
