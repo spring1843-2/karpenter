@@ -91,15 +91,21 @@ By adopting this practice we allow our users who are early adopters to test out 
 
 # Released Upgrade Notes
 
+## Upgrading to v0.24.0+
+* Settings are no longer updated dynamically while Karpenter is running. If you manually make a change to the `karpenter-global-settings` ConfigMap, you will need to reload the containers by restarting the deployment with `kubectl rollout restart -n karpenter deploy/karpenter`
+
+## Upgrading to v0.22.0+
+* Do not upgrade to this version unless you are on Kubernetes >= v1.21. Karpenter no longer supports Kubernetes v1.20, but now supports Kubernetes v1.25. This change is due to the v1 PDB API, which was introduced in K8s v1.20 and subsequent removal of the v1beta1 API in K8s v1.25.
+
 ## Upgrading to v0.20.0+
-* Prior to v0.20.0, Karpenter would prioritize certain instance type categories absent of any requirements in the Provisioner. v0.20.0+ removes prioritizing these instance type categories ("m", "c", "r", "a", "t", "i") in code. Bare Metal and GPU instance types are still deprioritized and only used if no other instance types are compatible with the node requirements. This means that, now, you will need to explicitly define the instance types, sizes or categories you want to allow in your Provisioner; otherwise, it is possible that you receive more exotic instance types.
+* Prior to v0.20.0, Karpenter would prioritize certain instance type categories absent of any requirements in the Provisioner. v0.20.0+ removes prioritizing these instance type categories ("m", "c", "r", "a", "t", "i") in code. Bare Metal and GPU instance types are still deprioritized and only used if no other instance types are compatible with the node requirements. Since Karpenter does not prioritize any instance types, if you do not want exotic instance types and are not using the runtime Provisioner defaults, you will need to specify this in the Provisioner.
 
 ## Upgrading to v0.19.0+
 * The karpenter webhook and controller containers are combined into a single binary, which requires changes to the helm chart. If your Karpenter installation (helm or otherwise) currently customizes the karpenter webhook, your deployment tooling may require minor changes.
 * Karpenter now supports native interruption handling. If you were previously using Node Termination Handler for spot interruption handling and health events, you will need to remove the component from your cluster before enabling `aws.interruptionQueueName`. For more details on Karpenter's interruption handling, see the [Interruption Handling Docs]({{< ref "./concepts/deprovisioning/#interruption" >}}). For common questions on the migration process, see the [FAQ]({{< ref "./faq/#interruption-handling" >}})
 * Instance category defaults are now explicitly persisted in the Provisioner, rather than handled implicitly in memory. By default, Provisioners will limit instance category to c,m,r. If any instance type constraints are applied, it will override this default. If you have created Provisioners in the past with unconstrained instance type, family, or category, Karpenter will now more flexibly use instance types than before. If you would like to apply these constraints, they must be included in the Provisioner CRD.
 * Karpenter CRD raw YAML URLs have migrated from `https://raw.githubusercontent.com/aws/karpenter{{< githubRelRef >}}charts/karpenter/crds/...` to `https://raw.githubusercontent.com/aws/karpenter{{< githubRelRef >}}pkg/apis/crds/...`. If you reference static Karpenter CRDs or rely on `kubectl replace -f` to apply these CRDs from their remote location, you will need to migrate to the new location.
-* Pods without an ownerRef (also called "controllerless" or "naked" pods) will now be evicted by default during node termination and consolidation.  Users can prevent controllerless pods from being voluntarily disrupted by applying the `karpenter.sh/do-not-evict: true` annotation to the pods in question.
+* Pods without an ownerRef (also called "controllerless" or "naked" pods) will now be evicted by default during node termination and consolidation.  Users can prevent controllerless pods from being voluntarily disrupted by applying the `karpenter.sh/do-not-evict: "true"` annotation to the pods in question.
 * The following CLI options/environment variables are now removed and replaced in favor of pulling settings dynamically from the `karpenter-global-settings` ConfigMap. See the [Settings docs]({{<ref "./concepts/settings/#environment-variables--cli-flags" >}}) for more details on configuring the new values in the ConfigMap.
 
    * `CLUSTER_NAME` -> `aws.clusterName`

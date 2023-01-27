@@ -37,21 +37,24 @@ import (
 	. "github.com/onsi/gomega"
 	. "knative.dev/pkg/logging/testing"
 
-	"github.com/aws/karpenter-core/pkg/cloudprovider"
 	"github.com/aws/karpenter/pkg/apis"
-	awssettings "github.com/aws/karpenter/pkg/apis/config/settings"
+	"github.com/aws/karpenter/pkg/apis/settings"
 	"github.com/aws/karpenter/pkg/apis/v1alpha1"
 	awscache "github.com/aws/karpenter/pkg/cache"
 	"github.com/aws/karpenter/pkg/cloudprovider/amifamily"
 	awscontext "github.com/aws/karpenter/pkg/context"
 	"github.com/aws/karpenter/pkg/test"
 
+	"github.com/aws/karpenter-core/pkg/cloudprovider"
+
 	"github.com/aws/karpenter-core/pkg/operator/controller"
 
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aws/aws-sdk-go/service/ssm"
 
-	"github.com/aws/karpenter-core/pkg/apis/config/settings"
+	"github.com/aws/karpenter/pkg/fake"
+
+	coresettings "github.com/aws/karpenter-core/pkg/apis/settings"
 	"github.com/aws/karpenter-core/pkg/apis/v1alpha5"
 	"github.com/aws/karpenter-core/pkg/controllers/provisioning"
 	"github.com/aws/karpenter-core/pkg/controllers/state"
@@ -62,7 +65,6 @@ import (
 	. "github.com/aws/karpenter-core/pkg/test/expectations"
 	machineutil "github.com/aws/karpenter-core/pkg/utils/machine"
 	"github.com/aws/karpenter-core/pkg/utils/pretty"
-	"github.com/aws/karpenter/pkg/fake"
 
 	"github.com/aws/karpenter/pkg/providers/securitygroup"
 	"github.com/aws/karpenter/pkg/providers/subnet"
@@ -96,7 +98,6 @@ var fakeClock *clock.FakeClock
 var provisioner *v1alpha5.Provisioner
 var nodeTemplate *v1alpha1.AWSNodeTemplate
 var pricingProvider *PricingProvider
-var settingsStore coretest.SettingsStore
 var subnetProvider *subnet.Provider
 var securityGroupProvider *securitygroup.Provider
 
@@ -112,11 +113,8 @@ const (
 
 var _ = BeforeSuite(func() {
 	env = coretest.NewEnvironment(scheme.Scheme, coretest.WithCRDs(apis.CRDs...))
-	settingsStore = coretest.SettingsStore{
-		settings.ContextKey:    coretest.Settings(),
-		awssettings.ContextKey: test.Settings(),
-	}
-	ctx = settingsStore.InjectSettings(ctx)
+	ctx = coresettings.ToContext(ctx, coretest.Settings())
+	ctx = settings.ToContext(ctx, test.Settings())
 	ctx, stop = context.WithCancel(ctx)
 
 	launchTemplateCache = cache.New(awscontext.CacheTTL, awscontext.CacheCleanupInterval)
@@ -158,7 +156,7 @@ var _ = BeforeSuite(func() {
 		kubeClient:           env.Client,
 	}
 	fakeClock = clock.NewFakeClock(time.Now())
-	cluster = state.NewCluster(ctx, fakeClock, env.Client, cloudProvider)
+	cluster = state.NewCluster(fakeClock, env.Client, cloudProvider)
 	recorder = coretest.NewEventRecorder()
 	prov = provisioning.NewProvisioner(ctx, env.Client, env.KubernetesInterface.CoreV1(), recorder, cloudProvider, cluster)
 	provisioningController = provisioning.NewController(env.Client, prov, recorder)
@@ -171,11 +169,8 @@ var _ = AfterSuite(func() {
 
 var _ = BeforeEach(func() {
 	ctx = injection.WithOptions(ctx, opts)
-	settingsStore = coretest.SettingsStore{
-		settings.ContextKey:    coretest.Settings(),
-		awssettings.ContextKey: test.Settings(),
-	}
-	ctx = settingsStore.InjectSettings(ctx)
+	ctx = coresettings.ToContext(ctx, coretest.Settings())
+	ctx = settings.ToContext(ctx, test.Settings())
 	nodeTemplate = &v1alpha1.AWSNodeTemplate{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: coretest.RandomName(),
@@ -205,6 +200,7 @@ var _ = BeforeEach(func() {
 		},
 	})
 
+	cluster.Reset()
 	recorder.Reset()
 	fakeEC2API.Reset()
 	fakeSSMAPI.Reset()

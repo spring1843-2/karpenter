@@ -5,10 +5,11 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "karpenter.labels" . | nindent 4 }}
-  {{- with .Values.additionalAnnotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- with .Values.additionalAnnotations }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    checksum/settings: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicas }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
@@ -113,6 +114,18 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+        {{- with .Values.controller.sidecarContainer }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if and (.Values.controller.sidecarContainer) (or .Values.controller.extraVolumeMounts .Values.controller.sidecarVolumeMounts) }}
+          volumeMounts:
+          {{- with .Values.controller.extraVolumeMounts }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.controller.sidecarVolumeMounts }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

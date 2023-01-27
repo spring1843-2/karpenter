@@ -33,13 +33,14 @@ import (
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/ptr"
 
-	"github.com/aws/karpenter-core/pkg/apis/v1alpha5"
-	awssettings "github.com/aws/karpenter/pkg/apis/config/settings"
+	awssettings "github.com/aws/karpenter/pkg/apis/settings"
 	"github.com/aws/karpenter/pkg/apis/v1alpha1"
 	"github.com/aws/karpenter/pkg/cloudprovider/amifamily"
 	awscontext "github.com/aws/karpenter/pkg/context"
 	awserrors "github.com/aws/karpenter/pkg/errors"
 	"github.com/aws/karpenter/pkg/providers/securitygroup"
+
+	"github.com/aws/karpenter-core/pkg/apis/v1alpha5"
 
 	"github.com/aws/karpenter-core/pkg/cloudprovider"
 	"github.com/aws/karpenter-core/pkg/utils/pretty"
@@ -199,6 +200,9 @@ func (p *LaunchTemplateProvider) createLaunchTemplate(ctx context.Context, optio
 			BlockDeviceMappings: p.blockDeviceMappings(options.BlockDeviceMappings),
 			IamInstanceProfile: &ec2.LaunchTemplateIamInstanceProfileSpecificationRequest{
 				Name: aws.String(options.InstanceProfile),
+			},
+			Monitoring: &ec2.LaunchTemplatesMonitoringRequest{
+				Enabled: aws.Bool(options.DetailedMonitoring),
 			},
 			SecurityGroupIds: aws.StringSlice(options.SecurityGroupsIDs),
 			UserData:         aws.String(userData),
