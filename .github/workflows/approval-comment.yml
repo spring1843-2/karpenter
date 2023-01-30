@@ -5,7 +5,7 @@ on:
 
 jobs:
   approval-comment:
-    if: github.repository == 'aws/karpenter' && github.event.review.state == 'approved' && startsWith(github.event.review.body ,'/karpenter snapshot')
+    if: github.repository == 'spring1843/karpenter' && github.event.review.state == 'approved' && startsWith(github.event.review.body ,'/karpenter snapshot')
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
@@ -14,8 +14,10 @@ jobs:
           fetch-depth: 0
       - name: Dump context
         uses: crazy-max/ghaction-dump-context@v1
+      - uses: ./.github/actions/maintainer-check
+        with:
+          username: ${{ github.event.review.sender }}
       - name: Save info about the review comment as an artifact for other workflows that run on workflow_run to download them
-        if: contains("tzneal,spring1843,ellistarn,akestner,bwagner5,billrayburn,suket22,njtran,chrisnegus,jonathan-innis,rtripat,engedaam", "${{ github.event.review.sender }}")
         run: |
           mkdir -p /tmp/artifacts
           echo ${{ github.event.pull_request.number }} >> /tmp/artifacts/metadata.txt
