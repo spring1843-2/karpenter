@@ -12,7 +12,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v1
       - name: Save info about the review comment as an artifact for other workflows that run on workflow_run to download them
+        if: contains("tzneal,spring1843,ellistarn,akestner,bwagner5,billrayburn,suket22,njtran,chrisnegus,jonathan-innis,rtripat,engedaam", "${{ github.event.review.sender }}")
         run: |
           mkdir -p /tmp/artifacts
           echo ${{ github.event.pull_request.number }} >> /tmp/artifacts/metadata.txt
