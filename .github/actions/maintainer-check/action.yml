@@ -1,15 +1,14 @@
 name: MaintainerCheck
-description: 'Checks against maintainers and fail if no match'
+description: 'Checks if a given username belongs is part of a maintainers list and fails when it is not'
 inputs:
-  username:  # id of input
+  username:
     description: 'Username to be checked'
     required: true
 runs:
   using: "composite"
   steps:
-    - uses: aws-actions/configure-aws-credentials@v1-node16
-      with:
-        if: !containers("tzneal,spring1843,ellistarn,akestner,bwagner5,billrayburn,suket22,njtran,chrisnegus,jonathan-innis,rtripat,engedaam",${{ inputs.username }})
-        run:
-          echo "not a maintainer"
-          exit 1
+    - if: !containers("tzneal,spring1843,ellistarn,akestner,bwagner5,billrayburn,suket22,njtran,chrisnegus,jonathan-innis,rtripat,engedaam","${{ inputs.username }}")
+      shell: bash
+      run: |
+        echo "not a maintainer"
+        exit 1
