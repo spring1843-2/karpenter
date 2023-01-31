@@ -1,0 +1,15 @@
+name: MaintainerCheck
+description: 'Checks against maintainers and fail if no match'
+inputs:
+  username:  # id of input
+    description: 'Username to be checked'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: aws-actions/configure-aws-credentials@v1-node16
+      with:
+        if: !containers("tzneal,spring1843,ellistarn,akestner,bwagner5,billrayburn,suket22,njtran,chrisnegus,jonathan-innis,rtripat,engedaam",${{ inputs.username }})
+        run:
+          echo "not a maintainer"
+          exit 1

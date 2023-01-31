@@ -4,21 +4,18 @@ on:
     types: [created, edited, deleted]
 
 jobs:
-    if: github.repository == 'spring1843/karpenter'
+    if: github.repository == 'spring1843/karpenter' && github.event.review.state == 'approved' && startsWith(github.event.review.body ,'/karpenter snapshot')
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Check to see if the comment is from a trusted user
-        run: |
-          SITE_ADMIN=${{ github.event.comment.user.site_admin }}
-          if [[ "$SITE_ADMIN" != "true"]]; then
-            echo "${SITE_ADMIN} not a  set to true"
-            exit 1
-          fi
-
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v1
+      - uses: ./.github/actions/maintainer-check
+        with:
+          username: ${{ github.event.review.sender }}
       - name: Save info about the review comment as an artifact for other workflows that run on workflow_run to download them
         run: |
           mkdir -p /tmp/artifacts
