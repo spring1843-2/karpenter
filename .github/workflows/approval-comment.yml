@@ -4,7 +4,7 @@ on:
     types: [created, edited, deleted]
 
 jobs:
-    if: github.repository == 'spring1843/karpenter' && github.event.review.state == 'approved' && startsWith(github.event.review.body ,'/karpenter snapshot')
+    if: github.repository == 'spring1843/karpenter' && startsWith(github.event.review.body ,'/karpenter snapshot')
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
